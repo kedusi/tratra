@@ -4,3 +4,13 @@
     margin: 0;
     padding: 0;
 }
+
+.list li h3, .list li p {
+    display: inline-block;
+    color: inherit;
+}
+
+.list li:hover {
+    color: var(--dark-highlight);
+    cursor: pointer;
+}
