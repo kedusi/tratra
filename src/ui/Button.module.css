@@ -1,0 +1,11 @@
+.button {
+    margin: 1em;
+    display: inline-block;
+    border: none;
+    background-color: inherit;
+}
+
+.button:hover {
+    cursor: pointer;
+    color: var(--dark-highlight);
+}
