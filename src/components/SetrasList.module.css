@@ -14,3 +14,10 @@
     color: var(--dark-highlight);
     cursor: pointer;
 }
+
+.list a:visited,
+.list a:hover,
+.list a:active,
+.list a {
+    color: inherit;
+}

@@ -1,0 +1,8 @@
+.details li {
+    list-style-type: none;
+}
+
+.details {
+    margin: 0;
+    padding: 0;
+}
