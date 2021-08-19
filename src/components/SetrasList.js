@@ -2,17 +2,11 @@ import { Link } from 'react-router-dom';
 import Card from '../ui/Card';
 import classes from './SetrasList.module.css';
 
-const setras = [
-	{ name: 'Fill Suite Gowning', location: 'V2038-V2033' },
-	{ name: 'Fill Suite De-Gowning', location: 'V2039-V2033' },
-	{ name: 'Fill Suite Entrance', location: 'V2038-V2039' },
-];
-
 const Item = (props) => {
     const path = '/' + props.title.replaceAll(' ', '');
 
     return (
-		<li key={props.title}>
+		<li>
 			<p>***</p>
 			<Link to={path}>
 				<h3>{props.title}</h3>
@@ -23,8 +17,8 @@ const Item = (props) => {
 };
 
 const SetrasList = (props) => {
-	const setrasList = setras.map((el) => (
-		<Item title={el.name} location={el.location} />
+	const setrasList = props.setras.map((el) => (
+		<Item key={el.name} title={el.name} location={el.location} />
 	));
 
 	return (

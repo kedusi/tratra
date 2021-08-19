@@ -7,9 +7,15 @@ const NewSetraForm = (props) => {
 	const [commonName, setCommonName] = useState('');
     const [location, setLocation] = useState('');
 
+	const newSetraHandler = (event) => {
+		event.preventDefault();
+		
+		props.onAddSetra({commonName, location});
+	};
+
 	return (
 		<Card title='Add a SETRA'>
-			<form className={classes.form}>
+			<form className={classes.form} onSubmit={newSetraHandler}>
 				<label>Common Name</label>
 				<input
 					type='text'
