@@ -10,7 +10,7 @@ const NewSetraForm = (props) => {
 	const newSetraHandler = (event) => {
 		event.preventDefault();
 		
-		props.onAddSetra({commonName, location});
+		props.onAddSetra(commonName, location);
 	};
 
 	return (

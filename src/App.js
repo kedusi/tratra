@@ -78,18 +78,28 @@ function App() {
 		);
 	};
 
+    const addUnitHandler = (name, location) => {
+        setSetraUnits((prev) =>
+			[...prev, {
+                name,
+                location,
+                settings: setraSettingsTemplate.reduce((acc, curr) => {acc[curr] = ''; return acc}, {})
+            }]
+		);
+    }
+
 	useEffect(() => {
         console.log('---');
-		for (let unit of setraUnits) {
-			for (let setting of Object.getOwnPropertyNames(unit.settings)) {
-				console.log(unit.name, setting, unit.settings[setting]);
+		for (let i = 0; i < setraUnits.length; i++) {
+			for (let setting of Object.getOwnPropertyNames(setraUnits[i].settings)) {
+				console.log(setraUnits[i].name, setting, setraUnits[i].settings[setting]);
 			}
 		}
 	}, [setraUnits]);
 
 	return (
 		<div className='App'>
-			{/* <Setras setras={setraUnits} onAddUnit={addUnitHandler} /> */}
+			<Setras setras={setraUnits} onAddUnit={addUnitHandler} />
 			<Settings
 				setra={
 					setraUnits.filter(
