@@ -7,7 +7,7 @@ const Item = (props) => {
 
     return (
 		<li>
-			<p>***</p>
+			<p className={classes.topBorder}>***</p>
 			<Link to={path}>
 				<h3>{props.title}</h3>
 				<p>{props.location}</p>

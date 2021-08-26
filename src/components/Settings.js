@@ -2,13 +2,16 @@
 //       with the new schema
 
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import classes from './Settings.module.css';
 
 const Settings = (props) => {
 	// const [inputsState, setInputsState] = useState([]);
-	const [inputsState, setInputsState] = useState(props.setra.settings);
+    const unitChoice = useParams().id;
+    const setra = props.setras.filter(unit => unit.name.replace(' ', '') === unitChoice)[0];
+	const [inputsState, setInputsState] = useState(setra.settings);
 
 	const blurHandler = (unitName, setting, event) => {
 		props.onEditSetting(unitName, setting, event.target.value);
@@ -21,13 +24,13 @@ const Settings = (props) => {
 		);
 	};
 
-	const settingsList = Object.getOwnPropertyNames(props.setra.settings).map((prop) => ( // props.setra.settings to re-render when a setting is added because it is added in App and sent as a prop to Settings
+	const settingsList = Object.getOwnPropertyNames(setra.settings).map((prop) => ( // props.setra.settings to re-render when a setting is added because it is added in App and sent as a prop to Settings
 		<li key={prop}>
 			<label>{prop}</label>
 			<input
 				type='text'
 				value={inputsState[prop] || ''} // || '' so it will not give uncontrolled/controlled error
-				onBlur={blurHandler.bind(null, props.setra.name, prop)}
+				onBlur={blurHandler.bind(null, setra.name, prop)}
 				onChange={changeHandler.bind(null, prop)}
 			/>
 		</li>
@@ -39,7 +42,7 @@ const Settings = (props) => {
 	};
 
 	return (
-		<Card title={props.setraName}>
+		<Card title={setra.name}>
 			<Button label='Add a Setting' onClick={addSettingHandler} />
 			<ul className={classes.details}>{settingsList}</ul>
 		</Card>

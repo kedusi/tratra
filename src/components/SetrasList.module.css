@@ -6,7 +6,6 @@
 }
 
 .list li h3, .list li p {
-    display: inline-block;
     color: inherit;
 }
 
@@ -20,4 +19,10 @@
 .list a:active,
 .list a {
     color: inherit;
+}
+
+.topBorder {
+    line-height: 0;
+    padding: 0;
+    margin: 0;
 }
