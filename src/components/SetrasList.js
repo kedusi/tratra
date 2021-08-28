@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Button from '../ui/Button';
 import Card from '../ui/Card';
 import classes from './SetrasList.module.css';
 
@@ -11,14 +12,19 @@ const Item = (props) => {
 			<Link to={path}>
 				<h3>{props.title}</h3>
 				<p>{props.location}</p>
+                <Button onClick={props.remove} label='Remove' />
 			</Link>
 		</li>
 	);
 };
 
 const SetrasList = (props) => {
+    const removeHandler = (name) => {
+        props.onRemoveSetra(name.replaceAll(' ', ''));
+    };
+
 	const setrasList = props.setras.map((el) => (
-		<Item key={el.name} title={el.name} location={el.location} />
+		<Item key={el.name} title={el.name} location={el.location} remove={removeHandler.bind(null, el.name)} />
 	));
 
 	return (
