@@ -12,15 +12,15 @@ const Item = (props) => {
 			<Link to={path}>
 				<h3>{props.title}</h3>
 				<p>{props.location}</p>
-                <Button onClick={props.remove} label='Remove' />
 			</Link>
+            <Button onClick={props.remove} label='Remove' />
 		</li>
 	);
 };
 
 const SetrasList = (props) => {
     const removeHandler = (name) => {
-        props.onRemoveSetra(name.replaceAll(' ', ''));
+        props.onRemoveSetra(name);
     };
 
 	const setrasList = props.setras.map((el) => (

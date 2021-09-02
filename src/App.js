@@ -50,6 +50,10 @@ function App() {
 		loadData();
 	}, []);
 
+    useEffect(() => {
+        sendData();
+    }, [tratra]);
+
 	const addSettingHandler = (newSettingName) => {
 		setTratra((prev) => {
 			return {
@@ -112,6 +116,7 @@ function App() {
 		setTratra((prev) => {
 			const newState = { ...prev };
 			newState.units = prev.units.filter((unit) => unit.name !== name);
+            console.log(newState);
 			return newState;
 		});
 	};
@@ -139,12 +144,12 @@ function App() {
 					</p>
 				</Route>
 			</Switch>
-			<Button label='Update' onClick={sendData} />
+			{/* <Button label='Update' onClick={sendData} />
 			<p>
 				{sendingData && !sendingError && 'Sending...'}
 				{sendingError && 'Sending error...'}
 				{!sendingData && !sendingError && '<>'}
-			</p>
+			</p> */}
 		</div>
 	);
 }
