@@ -3,62 +3,79 @@ import './App.css';
 import Settings from './components/Settings';
 import Setras from './components/Setras';
 
-import NewSettingPage from './components/NewSettingPage';
 import Button from './ui/Button';
+import { Route, Switch, useParams } from 'react-router';
 
-const setras = {
-	template: ['Alarm Threshold', 'Alarm Timeout'],
-	units: [
-		{
-			name: 'Elephant Ballroom',
-			location: 'V2036-V2033',
-			settings: {
-				'Alarm Threshold': '.04',
-				'Alarm Timeout': '30s',
-			},
-		},
-		{
-			name: 'Elephant Bathtub',
-			location: 'V2036-V2038',
-			settings: {
-				'Alarm Threshold': '.03',
-				'Alarm Timeout': '45s',
-			},
-		},
-	],
-};
+const fetchURL = 'https://tratra-6792d-default-rtdb.firebaseio.com/tratra.json';
 
 function App() {
-	const [setraSettingsTemplate, setSetraSettingsTemplate] = useState(
-		setras.template
-	);
-	const [setraUnits, setSetraUnits] = useState(setras.units);
+	const [tratra, setTratra] = useState({ template: [], units: [] });
+	const [fetchingData, setFetchingData] = useState(false);
+	const [fetchingError, setFetchingError] = useState(false);
+	const [sendingData, setSendingData] = useState(false);
+	const [sendingError, setSendingError] = useState(false);
 
-	// simply add new setting name to the template array
-	const addSettingHandler = (newSettingName) => {
-		setSetraSettingsTemplate((prevState) => [...prevState, newSettingName]);
+	const loadData = async () => {
+		setFetchingData(true);
+		try {
+			const response = await fetch(fetchURL);
+			const data = await response.json();
+			setTratra((prev) => (data ? data : prev));
+		} catch (e) {
+			setFetchingData(false);
+			setFetchingError(true);
+			console.log(e);
+		}
+		setFetchingData(false);
 	};
 
-	// update all units' settings to have properties to match all template properties
-	// occurs when the template is changed
+	const sendData = async () => {
+		setSendingData(true);
+		try {
+			const response = await fetch(fetchURL, {
+				method: 'PUT',
+				body: JSON.stringify(tratra),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		} catch (e) {
+			setSendingError(true);
+			console.log(e.message);
+		}
+		setSendingData(false);
+	};
+
 	useEffect(() => {
-		setSetraUnits((prevState) => 
-			prevState.map((unit) => {
-                return {
-                    ...unit,
-                    settings: setraSettingsTemplate.reduce((acc, curr) => {
-                        acc[curr] = unit.settings[curr] || '';
-                        return acc;
-                    }, {}),
-				};
-			})
-		);
-	}, [setraSettingsTemplate]);
+		loadData();
+	}, []);
+
+    useEffect(() => {
+        sendData();
+    }, [tratra]);
+
+	const addSettingHandler = (newSettingName) => {
+		setTratra((prev) => {
+			return {
+				template: [...prev.template, newSettingName],
+				units: prev.units.map((unit) => {
+					return {
+						...unit,
+						settings: {
+							...unit.settings,
+							[newSettingName]: '',
+						},
+					};
+				}),
+			};
+		});
+	};
 
 	// map through units
 	const editSettingHandler = (setraName, settingName, settingValue) => {
-		setSetraUnits((prevState) =>
-			prevState.map((unit) =>
+		setTratra((prev) => {
+			const newState = { ...prev };
+			newState.units = prev.units.map((unit) =>
 				unit.name !== setraName
 					? // if not given unit name, return unit unchanged
 					  unit
@@ -74,47 +91,65 @@ function App() {
 								[settingName]: settingValue,
 							},
 					  }
-			)
-		);
+			);
+			return newState;
+		});
 	};
 
-    const addUnitHandler = (name, location) => {
-        setSetraUnits((prev) =>
-			[...prev, {
-                name,
-                location,
-                settings: setraSettingsTemplate.reduce((acc, curr) => {acc[curr] = ''; return acc}, {})
-            }]
-		);
-    }
+	const addUnitHandler = (name, location) => {
+		setTratra((prev) => {
+			const newState = { ...prev };
+			newState.units.push({
+				name,
+				location,
+				settings: prev.template.reduce((acc, curr) => {
+					acc[curr] = '';
+					return acc;
+				}, {}),
+			});
+			return newState;
+		});
+	};
 
-	useEffect(() => {
-        console.log('---');
-		for (let i = 0; i < setraUnits.length; i++) {
-			for (let setting of Object.getOwnPropertyNames(setraUnits[i].settings)) {
-				console.log(setraUnits[i].name, setting, setraUnits[i].settings[setting]);
-			}
-		}
-	}, [setraUnits]);
+	const removeUnitHandler = (name) => {
+        console.log(name);
+		setTratra((prev) => {
+			const newState = { ...prev };
+			newState.units = prev.units.filter((unit) => unit.name !== name);
+            console.log(newState);
+			return newState;
+		});
+	};
 
 	return (
 		<div className='App'>
-			<Setras setras={setraUnits} onAddUnit={addUnitHandler} />
-			<Settings
-				setra={
-					setraUnits.filter(
-						(unit) => unit.name === 'Elephant Ballroom'
-					)[0]
-				}
-				onAddSetting={addSettingHandler}
-				onEditSetting={editSettingHandler}
-			/>
-			<Button
-				label='Show Units'
-				onClick={() => {
-					console.log(setraUnits);
-				}}
-			/>
+			<Switch>
+				<Route path='/:id'>
+					<Settings
+						setras={tratra.units}
+						onAddSetting={addSettingHandler}
+						onEditSetting={editSettingHandler}
+					/>
+				</Route>
+				<Route path='/'>
+					<Setras
+						setras={tratra.units}
+						onAddUnit={addUnitHandler}
+						onRemoveUnit={removeUnitHandler}
+					/>
+					<p>
+						{fetchingData && !fetchingError && 'Loading...'}
+						{fetchingError && 'Error...'}
+						{!fetchingData && !fetchingError && '<>'}
+					</p>
+				</Route>
+			</Switch>
+			{/* <Button label='Update' onClick={sendData} />
+			<p>
+				{sendingData && !sendingError && 'Sending...'}
+				{sendingError && 'Sending error...'}
+				{!sendingData && !sendingError && '<>'}
+			</p> */}
 		</div>
 	);
 }

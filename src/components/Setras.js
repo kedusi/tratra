@@ -6,7 +6,10 @@ const Setras = (props) => {
 	return (
 		<Fragment>
 			<NewSetraForm onAddSetra={props.onAddUnit} />
-			<SetrasList setras={props.setras} />
+			<SetrasList
+				setras={props.setras}
+				onRemoveSetra={props.onRemoveUnit}
+			/>
 		</Fragment>
 	);
 };
